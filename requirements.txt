@@ -5,5 +5,7 @@ matplotlib
 scikit-learn
 catboost
 xgboost
-mysql-connector-python
+sqlalchemy
+pymysql
+
 #-e .

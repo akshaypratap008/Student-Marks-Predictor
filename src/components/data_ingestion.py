@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 
 from dataclasses import dataclass
 
-import mysql.connector
+from sqlalchemy import create_engine
 
 @dataclass
 class DataIngestionConfig:
@@ -24,23 +24,21 @@ class DataIngestion:
         self.password = password
         self.database = database
 
-    def _connect(self):
-        # create MySQL connection
-        return mysql.connector.connect(
-            host = self.host,
-            user = self.user,
-            password = self.password,
-            database = self.database
-        )
+        #create sql server connection url
+        self.conn_url = f'mysql+pymysql://{user}:{password}@{host}/{database}'
     
     def load_data(self, query):
-        conn = self._connect()  #activate connection
-        logging.info('Connection established with sql server')
+        # create MySQL connection
         try:
-            df = pd.read_sql(query, conn)
+            engine = create_engine(self.conn_url)
+            logging.info('Sql server connection created ')
+
+            df = pd.read_sql(query, engine)
+            logging.info('Data loaded succesfully from mysql')
+
             return df
-        finally:
-            conn.close()
+        except Exception as e:
+            raise CustomeException(e, sys)
 
     def initiate_data_ingestion(self):
         logging.info("Entered the data ingestion method or component")
@@ -49,14 +47,16 @@ class DataIngestion:
             query = 'SELECT * FROM stud'
             df = self.load_data(query)
             logging.info('Data succesfully read from server and stored as dataframe')
-            
-            os.makedirs(os.path.dirname(self.ingestion_config.train_data_path), exist_ok=True)
 
+            # save raw data            
+            os.makedirs(os.path.dirname(self.ingestion_config.raw_data_path), exist_ok=True)
             df.to_csv(self.ingestion_config.raw_data_path, index = False, header = True)
 
+            #train test split
             logging.info('Train test split initiated')
             train_set, test_set = train_test_split(df, test_size=0.2, random_state=42)
 
+            # save train and test data
             train_set.to_csv(self.ingestion_config.train_data_path, index = False, header=True)
             test_set.to_csv(self.ingestion_config.test_data_path, index = False, header=True)
 
