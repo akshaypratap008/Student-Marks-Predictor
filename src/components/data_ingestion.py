@@ -8,6 +8,8 @@ from sklearn.model_selection import train_test_split
 
 from dataclasses import dataclass
 
+import mysql.connector
+
 @dataclass
 class DataIngestionConfig:
     train_data_path:str = os.path.join('artifact', 'train.csv')
@@ -15,14 +17,38 @@ class DataIngestionConfig:
     raw_data_path:str = os.path.join('artifact', 'data.csv')
 
 class DataIngestion:
-    def __init__(self):
+    def __init__(self, host, user, password, database):
         self.ingestion_config = DataIngestionConfig()
+        self.host = host
+        self.user = user
+        self.password = password
+        self.database = database
+
+    def _connect(self):
+        # create MySQL connection
+        return mysql.connector.connect(
+            host = self.host,
+            user = self.user,
+            password = self.password,
+            database = self.database
+        )
+    
+    def load_data(self, query):
+        conn = self._connect()  #activate connection
+        logging.info('Connection established with sql server')
+        try:
+            df = pd.read_sql(query, conn)
+            return df
+        finally:
+            conn.close()
 
     def initiate_data_ingestion(self):
         logging.info("Entered the data ingestion method or component")
+        
         try:
-            df = pd.read_csv('notebooks\data\stud.csv')
-            logging.info('Data succesfully read and stored as dataframe')
+            query = 'SELECT * FROM stud'
+            df = self.load_data(query)
+            logging.info('Data succesfully read from server and stored as dataframe')
             
             os.makedirs(os.path.dirname(self.ingestion_config.train_data_path), exist_ok=True)
 
@@ -45,6 +71,11 @@ class DataIngestion:
             raise CustomeException(e, sys)
         
 if __name__ == "__main__":
-    obj = DataIngestion()
+    obj = DataIngestion(
+        host = '127.0.0.1',
+        user = 'root',
+        password = '',
+        database= 'mlproject1'
+    )
     obj.initiate_data_ingestion()
 
