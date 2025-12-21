@@ -81,7 +81,7 @@ Use the `Predict` page to provide inputs and get a predicted Mathematics score.
 """
     )
 
-    st.caption("Created by the project team — adjust the text here to provide more project-specific details.")
+    st.caption("Created by Akshay.")
 
 def show_predict():
     st.sidebar.header("Select Features")
