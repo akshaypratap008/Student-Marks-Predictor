@@ -38,12 +38,49 @@ class ModelTrainer:
                 'Decision Tree': DecisionTreeRegressor(),
                 'Random Forrest': RandomForestRegressor(),
                 'XGBRegressor': XGBRegressor(),
-                'CatBoostRegressor': CatBoostRegressor(verbose = True),
+                'CatBoostRegressor': CatBoostRegressor(verbose = False),
                 'AdaBoostRegressor': AdaBoostRegressor(),
                 'Gradient Boost': GradientBoostingRegressor()
             }
 
-            model_report:dict = evaluate_model(X_train= X_train, y_train = y_train, X_test = X_test, y_test = y_test, models = models)
+            params = {
+                'Decision Tree': {
+                    'criterion': ['squared_error', 'friedman_mse', 'absolute_error', 'poison'],
+                    # 'splitter': ['best', 'random'],
+                    # 'max_features': ['sqrt', 'log2']
+                },
+                'Random Forrest': {
+                    # 'criterion': ['squared_error', 'friedman_mse', 'absolute_error', 'poison'],
+                    # 'max_features':['sqrt','log2',None],
+                    'n_estimators': [8,16,32,64,128,256]
+                },
+                'Gradient Boost': {
+                    # 'loss':['squared_error', 'huber', 'absolute_error', 'quantile'],
+                    'learning_rate':[.1,.01,.05,.001],
+                    'subsample':[0.6,0.7,0.75,0.8,0.85,0.9],
+                    # 'criterion':['squared_error', 'friedman_mse'],
+                    # 'max_features':['auto','sqrt','log2'],
+                    'n_estimators': [8,16,32,64,128,256]
+                },
+                'Linear Regression': {},
+                'XGBRegressor': {
+                    'learning_rate':[.1,.01,.05,.001],
+                    'n_estimators': [8,16,32,64,128,256]
+                },
+                'CatBoostRegressor': {
+                    'depth': [6,8,10],
+                    'learning_rate': [0.01, 0.05, 0.1],
+                    'iterations': [30, 50, 100]
+                },
+                'AdaBoostRegressor': {
+                    'learning_rate':[.1,.01,0.5,.001],
+                    # 'loss':['linear','square','exponential'],
+                    'n_estimators': [8,16,32,64,128,256]
+                },
+                'KNN': {}
+            }
+
+            model_report:dict = evaluate_model(X_train= X_train, y_train = y_train, X_test = X_test, y_test = y_test, models = models, param=params)
 
             #best score
             best_score = max(list(model_report.values()))
@@ -60,11 +97,6 @@ class ModelTrainer:
                 raise CustomeException("No best Model Found")
             
             logging.info("Best model found on both train and test data")
-
-            # open preprocessor.pkl file from file folder
-            # file_path = os.path.join('artifact', 'preprocessor.pkl')
-            # with open(file_path, 'r') as f:
-            #     preprocessor = pickle.load(f)
 
             save_object(
                 file_path=self.model_trainer_config.trained_model_file_path,

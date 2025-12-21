@@ -8,5 +8,6 @@ xgboost
 sqlalchemy
 pymysql
 dill
+streamlit
 
 #-e .
