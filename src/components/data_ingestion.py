@@ -73,13 +73,13 @@ class DataIngestion:
         except Exception as e:
             raise CustomeException(e, sys)
         
-# if __name__ == "__main__":
-#     obj = DataIngestion(
-#         host = '127.0.0.1',
-#         user = 'root',
-#         password = '',
-#         database= 'mlproject1'
-#     )
+if __name__ == "__main__":
+    obj = DataIngestion(
+        host = '127.0.0.1',
+        user = 'root',
+        password = '',
+        database= 'mlproject1'
+    )
 #     train_data, test_data = obj.initiate_data_ingestion()
 #     data_transformation = DataTransformation()
 #     data_transformation.initiate_data_transformation(train_data, test_data)

@@ -156,11 +156,34 @@ def show_predict():
 
 
     col1, col2, col3= st.columns(3)
-    btn = col2.button("Predict Math's Score")
+    btn = col2.button("Predict Math's Score", use_container_width=True)
     if btn:
-        col2.markdown(f"This student's predicted Math's score is: {int(result)}")
         if int(result) >= 50:
             st.balloons()
+        st.markdown(f"<h2 style='text-align:center; color:white;'>The Student's Predicted Math Score", unsafe_allow_html=True, text_alignment='justify')
+
+        st.markdown(
+        f"""
+        <div style="
+            background-color:#1E1E1E;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+            margin-top: 20px;
+        ">
+            <h1 style="color:white; font-size: 40px; margin: 0;">
+                🎯 {int(result)}
+            </h1>
+            <p style="color:#CCCCCC; font-size: 20px; margin-top: 10px;">
+                Predicted Math Score
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+        
 
 def show_full_data():
     obj = DataIngestion(

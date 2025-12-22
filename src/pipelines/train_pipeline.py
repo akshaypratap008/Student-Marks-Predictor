@@ -3,6 +3,7 @@ from src.components.data_transformation import DataTransformation
 from src.components.model_trainer import ModelTrainer
 
 def run_training_pipeline():
+    
     obj = DataIngestion(
         host='127.0.0.1', 
         user='root', 
