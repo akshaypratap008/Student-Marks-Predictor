@@ -11,6 +11,7 @@ from sklearn.preprocessing import StandardScaler
 from src.components.data_ingestion import DataIngestion
 from src.pipelines.train_pipeline import run_training_pipeline
 
+
 st.set_page_config(page_title="Student Marks Predictor", page_icon=":pencil:", layout="wide")
 
 # Top-level title (kept for SEO / browser tab)
@@ -104,7 +105,6 @@ def show_home():
 
     Enjoy exploring the model and experimenting with it!
     """)
-
 
     btn = st.button('Load and Train with new data')
     last_training_datetime = f'Last trained at {datetime.now().strftime("%Y-%m-%d %H:%M")}'
